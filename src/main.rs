@@ -31,6 +31,7 @@ fn main() -> std::io::Result<()> {
     println!("{}===================================={}", purple, reset);
     println!("{}Type 'help' to see built-in commands{}\n", cyan, reset);
     let mut line = String::new();
+    let mut con = false;
     //let mut input = String::new();
     enable_raw_mode()?;
     loop {
@@ -47,8 +48,14 @@ fn main() -> std::io::Result<()> {
             }
             print!("$ ");
         } else {
-            execute!(io::stdout(), cursor::MoveToColumn(0),)?;
-            print!("dquote> ");
+            if con {
+                execute!(io::stdout(), cursor::MoveToColumn(0),)?;
+                print!("> ");
+                con=false
+            } else {
+                execute!(io::stdout(), cursor::MoveToColumn(0),)?;
+                print!("dquote> ");
+            }
         }
         io::stdout().flush().unwrap();
         loop {
@@ -57,8 +64,10 @@ fn main() -> std::io::Result<()> {
                     KeyCode::Enter => {
                         execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                         println!();
-                        if line.ends_with('\\'){
-                            
+                        if line.ends_with('\\') {
+                            con=true;
+                            line.pop();
+                            break;
                         }
                         if parse(&line) {
                             line.clear();
