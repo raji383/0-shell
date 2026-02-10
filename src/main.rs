@@ -29,11 +29,11 @@ fn main() -> std::io::Result<()> {
 
     println!("{}===================================={}", purple, reset);
     println!("{}Type 'help' to see built-in commands{}\n", cyan, reset);
-    let mut Line = String::new();
+    let mut line = String::new();
     //let mut input = String::new();
     enable_raw_mode()?;
     loop {
-        if Line.is_empty() {
+        if line.is_empty() {
             execute!(io::stdout(), cursor::MoveToColumn(0),)?;
             print!("$ ");
         }
@@ -44,13 +44,13 @@ fn main() -> std::io::Result<()> {
                     KeyCode::Enter => {
                         execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                         println!();
-                        parse(&Line);
-                        Line.clear();
+                        parse(&line);
+                        line.clear();
                         break;
                     }
                     KeyCode::Backspace => {
-                        if !Line.is_empty() {
-                            Line.pop();
+                        if !line.is_empty() {
+                            line.pop();
                             print!("\u{8} \u{8}");
                             io::stdout().flush().unwrap();
                         }
@@ -65,7 +65,7 @@ fn main() -> std::io::Result<()> {
                             println!();
                             break;
                         }
-                        Line.push(c);
+                        line.push(c);
                         print!("{}", c);
                         io::stdout().flush().unwrap();
                     }
@@ -75,5 +75,5 @@ fn main() -> std::io::Result<()> {
             }
         }
     }
-    disable_raw_mode()?;
+    //disable_raw_mode()?;
 }
