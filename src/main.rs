@@ -2,13 +2,14 @@ use crossterm::event::{self, Event, KeyCode, KeyModifiers};
 use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use crossterm::{cursor, execute};
 use gg::parse;
-use std::io;
 use std::io::Write;
+use std::{env, io};
 fn main() -> std::io::Result<()> {
     let purple = "\x1b[38;5;141m";
     let cyan = "\x1b[38;5;44m";
     let orange = "\x1b[38;5;208m";
     let gray = "\x1b[38;5;245m";
+    let blue_cyan = "\x1b[38;2;47;155;178m";
     let reset = "\x1b[0m";
 
     println!("{}===================================={}", purple, reset);
@@ -35,7 +36,19 @@ fn main() -> std::io::Result<()> {
     loop {
         if line.is_empty() {
             execute!(io::stdout(), cursor::MoveToColumn(0),)?;
+            match env::current_dir() {
+                Ok(path) => {
+                    let dir_name = path.file_name().unwrap_or_else(|| path.as_os_str());
+
+                    execute!(io::stdout(), cursor::MoveToColumn(0)).unwrap();
+                    print!("{}{}{}", blue_cyan, dir_name.to_string_lossy(), reset);
+                }
+                Err(_) => {}
+            }
             print!("$ ");
+        } else {
+            execute!(io::stdout(), cursor::MoveToColumn(0),)?;
+            print!("dquote> ");
         }
         io::stdout().flush().unwrap();
         loop {
@@ -44,8 +57,9 @@ fn main() -> std::io::Result<()> {
                     KeyCode::Enter => {
                         execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                         println!();
-                        parse(&line);
-                        line.clear();
+                        if parse(&line) {
+                            line.clear();
+                        }
                         break;
                     }
                     KeyCode::Backspace => {
@@ -61,6 +75,7 @@ fn main() -> std::io::Result<()> {
                             return Ok(());
                         }
                         if c == 'c' && key.modifiers.contains(KeyModifiers::CONTROL) {
+                            line.clear();
                             execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                             println!();
                             break;

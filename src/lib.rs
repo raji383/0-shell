@@ -4,17 +4,17 @@ use crossterm::{cursor, execute};
 use std::io;
 pub mod commend;
 
-pub fn parse(l: &str) {
+pub fn parse(l: &str) -> bool {
     let arg = l.split("&");
     let mut le = Vec::new();
+    let mut in_quotes = true;
     for s in arg {
         if s.is_empty() {
             continue;
         }
         let mut args = Vec::new();
         let mut current = String::new();
-        let mut in_quotes = false;
-
+        in_quotes = false;
         for c in s.chars() {
             match c {
                 '"' => in_quotes = !in_quotes,
@@ -33,9 +33,13 @@ pub fn parse(l: &str) {
         }
         le.push(args);
     }
+    if in_quotes {
+        return false;
+    }
     for i in le {
         aplye(i)
     }
+    true
 }
 fn aplye(arg: Vec<String>) {
     if arg.len() == 0 {
