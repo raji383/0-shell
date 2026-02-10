@@ -99,11 +99,11 @@ fn aplye(arg: Vec<String>) {
         "rm" => {}
 
         "cp" => {
-            crate::commend::cp::cp(&arg);
+            crate::commend::cp::cp(&arg[1..]);
         }
 
         "mv" => {
-            crate::commend::mv::mv(&arg);
+            crate::commend::mv::mv(&arg[1..]);
         }
 
         _ => {
