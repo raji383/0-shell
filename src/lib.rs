@@ -1,10 +1,13 @@
-use crate::commend::*;
 use crossterm::terminal::disable_raw_mode;
 use crossterm::{cursor, execute};
 use std::io;
 pub mod commend;
 
 pub fn parse(l: &str) -> bool {
+    /*if l.ends_with('\\') {
+        return false;
+    }*/
+
     let arg = l.split("&");
     let mut le = Vec::new();
     let mut in_quotes = true;
@@ -15,7 +18,8 @@ pub fn parse(l: &str) -> bool {
         let mut args = Vec::new();
         let mut current = String::new();
         in_quotes = false;
-        for c in s.chars() {
+        let src = s.replace("\\\"", "");
+        for c in src.chars() {
             match c {
                 '"' => in_quotes = !in_quotes,
                 ' ' if !in_quotes => {
@@ -94,7 +98,9 @@ fn aplye(arg: Vec<String>) {
 
         "rm" => {}
 
-        "cp" => {}
+        "cp" => {
+            crate::commend::cp::cp(&arg);
+        }
 
         "mv" => {
             crate::commend::mv::mv(&arg);

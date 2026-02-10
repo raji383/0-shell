@@ -57,6 +57,9 @@ fn main() -> std::io::Result<()> {
                     KeyCode::Enter => {
                         execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                         println!();
+                        if line.ends_with('\\'){
+                            
+                        }
                         if parse(&line) {
                             line.clear();
                         }
