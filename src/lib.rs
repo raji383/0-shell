@@ -108,7 +108,7 @@ fn aplye(arg: Vec<String>) {
              crate::commend::mkdir::mkdir(&arg[1..])
         }
 
-        "rm" => {}
+        "rm" => {  crate::commend::rm::rm(&arg[1..])}
 
         "cp" => {
             crate::commend::cp::cp(&arg[1..]);
