@@ -94,7 +94,11 @@ fn aplye(arg: Vec<String>) {
             crate::commend::ls::ls(&arg[1..])
         }
 
-        "cat" => {}
+        "cat" => {
+             crate::commend::cat::cat(&arg[1..])
+
+        }
+        
 
         "mkdir" => {}
 
