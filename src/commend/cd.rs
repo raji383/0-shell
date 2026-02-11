@@ -1,9 +1,9 @@
 use crossterm::{cursor, execute};
 use std::env;
-use std::path::PathBuf;
 use std::io::{self};
-
-
+use std::path::PathBuf;
+// pathBuf why ? because handle multi os;
+// like unix or windows and utf8
 pub fn cd(args: &[String]) {
     let current = match env::current_dir() {
         Ok(p) => p,
@@ -19,7 +19,6 @@ pub fn cd(args: &[String]) {
             Ok(h) => PathBuf::from(h),
             Err(_) => {
                 execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
                 eprintln!("cd: HOME not set");
                 return;
             }
@@ -41,7 +40,6 @@ pub fn cd(args: &[String]) {
             Ok(h) => PathBuf::from(h),
             Err(_) => {
                 execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
                 eprintln!("cd: HOME not set");
                 return;
             }
@@ -52,13 +50,14 @@ pub fn cd(args: &[String]) {
 
         _ => {
             execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
             eprintln!("cd: too many arguments");
             return;
         }
     };
 
     if let Err(_e) = env::set_current_dir(&target) {
+        execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
+        eprintln!("cd: can't cd to {:?}", target);
         return;
     }
 

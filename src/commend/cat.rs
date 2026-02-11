@@ -20,7 +20,6 @@ pub fn cat(args: &[String]) {
                     continue;
                 }
                 execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
                 println!("{}", content);
             }
             Err(e) => {

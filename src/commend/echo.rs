@@ -1,5 +1,5 @@
 use crossterm::{cursor, execute};
-use std::io::{self};
+use std::io::{self,Write};
 
 pub fn echo(args: &[String]) {
     let mut newline = true;
@@ -9,7 +9,9 @@ pub fn echo(args: &[String]) {
     if !args.is_empty() && args[0] == "-n" {
         newline = false;
         start = 1;
+        print!("{}",args[1]);
     }
+
 
     // print args
     for (i, arg) in args[start..].iter().enumerate() {
@@ -23,5 +25,7 @@ pub fn echo(args: &[String]) {
     if newline {
         execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
         println!();
+    }else{
+        io::stdout().flush().unwrap();
     }
 }
