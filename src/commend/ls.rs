@@ -115,8 +115,15 @@ fn ls_one_path(raw_path: &String, show_all: bool, long: bool, classify: bool, pr
         }
     };
 
-    entries.sort_by_key(|e| e.file_name());
+    entries.sort_by(|a, b| {
+        let a_name = a.file_name().to_string_lossy().to_lowercase();
+        let b_name = b.file_name().to_string_lossy().to_lowercase();
 
+        let a_clean = a_name.trim_start_matches('.');
+        let b_clean = b_name.trim_start_matches('.');
+
+        a_clean.cmp(b_clean)
+    });
     if print_header {
         execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
 
