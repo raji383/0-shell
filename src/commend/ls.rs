@@ -1,4 +1,4 @@
-/*use crossterm::{cursor, execute};
+use crossterm::{cursor, execute};
 use std::env;
 use std::fs;
 use std::io::{self};
@@ -373,4 +373,4 @@ fn has_acl(path: &Path) -> bool {
         }
     }
     false
-}*/
+}
