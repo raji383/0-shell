@@ -82,13 +82,17 @@ fn aplye(arg: Vec<String>) {
             );
         }
 
-        "echo" => {}
+        "echo" => {
+            crate::commend::echo::echo(&arg[1..])
+        }
 
         "pwd" => {
             crate::commend::pwd::pwd();
         }
 
-        "cd" => {}
+        "cd" => {
+            crate::commend::cd::cd(&arg[1..])
+        }
 
         "ls" => {
             crate::commend::ls::ls(&arg[1..])

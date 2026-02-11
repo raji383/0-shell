@@ -17,9 +17,6 @@ pub fn cat(args: &[String]) {
             Ok(mut file) => {
                 let mut content = String::new();
                 if let Err(e) = file.read_to_string(&mut content) {
-                    execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
-                    eprintln!("cat: {}: {}", filename, e);
                     continue;
                 }
                 execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
@@ -28,7 +25,6 @@ pub fn cat(args: &[String]) {
             }
             Err(e) => {
                 execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
                 eprintln!("cat: {}: {}", filename, e);
             }
         }
