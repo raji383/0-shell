@@ -58,7 +58,7 @@ pub fn cd(args: &[String]) {
         }
     };
 
-    if let Err(e) = env::set_current_dir(&target) {
+    if let Err(_e) = env::set_current_dir(&target) {
         return;
     }
 

@@ -16,7 +16,7 @@ pub fn cat(args: &[String]) {
         match File::open(filename) {
             Ok(mut file) => {
                 let mut content = String::new();
-                if let Err(e) = file.read_to_string(&mut content) {
+                if let Err(_e) = file.read_to_string(&mut content) {
                     continue;
                 }
                 execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
