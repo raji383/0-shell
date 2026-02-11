@@ -90,7 +90,9 @@ fn aplye(arg: Vec<String>) {
 
         "cd" => {}
 
-        "ls" => {}
+        "ls" => {
+            crate::commend::ls::ls(&arg[1..])
+        }
 
         "cat" => {}
 
