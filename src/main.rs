@@ -40,7 +40,6 @@ fn main() -> std::io::Result<()> {
             match env::current_dir() {
                 Ok(path) => {
                     let dir_name = path.file_name().unwrap_or_else(|| path.as_os_str());
-
                     execute!(io::stdout(), cursor::MoveToColumn(0)).unwrap();
                     print!("{}{}{}", blue_cyan, dir_name.to_string_lossy(), reset);
                 }
@@ -53,6 +52,7 @@ fn main() -> std::io::Result<()> {
                 print!("> ");
                 con=false
             } else {
+                line.push_str("\\n");
                 execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                 print!("dquote> ");
             }

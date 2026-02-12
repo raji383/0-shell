@@ -10,9 +10,9 @@ pub fn parse(l: &str) -> bool {
 
     let arg = l.split("&");
     let mut le = Vec::new();
-    let mut in_quotes = true;
+    let mut in_quotes = false;
     for s in arg {
-        if s.is_empty() {
+        if s.is_empty()  {
             continue;
         }
         let mut args = Vec::new();

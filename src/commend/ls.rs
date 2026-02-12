@@ -105,7 +105,7 @@ fn ls_one_path(mut path:  String, show_all: bool, long: bool, classify: bool, pr
         return;
     }
 
-    println!("{}",path);
+   // println!("{}",path);
 
     // ===== directory =====
     let mut entries: Vec<_> = match fs::read_dir(&path) {
@@ -322,7 +322,7 @@ fn print_entry(
     let is_fifo = ft.is_fifo();
 
     let colored = if is_symlink {
-        let mut display = name.to_string();
+        let mut display = escape_name(name);
         if classify {
             display.push('@');
         }
@@ -333,7 +333,7 @@ fn print_entry(
             format!("{CYAN}{display}{RESET} -> {RED}(broken){RESET}")
         }
     } else {
-        let mut display = name.to_string();
+        let mut display = escape_name(name);
         if classify {
             if is_dir {
                 display.push('/');
@@ -351,7 +351,8 @@ fn print_entry(
         } else if is_exec {
             format!("{GREEN}{display}{RESET}")
         } else {
-            display
+        let  dd = escape_name(name);
+        dd
         }
     };
 
@@ -389,4 +390,26 @@ fn has_acl(path: &Path) -> bool {
     false
 }
 // dev virtual file size 0
-//driver major 
+fn escape_name(name: &str) -> String {
+    if !name.contains('\n') {
+        return name.to_string();
+    }
+
+    let parts: Vec<String> = name
+        .split('\n')
+        .map(|part| {
+            let mut s = String::new();
+            for c in part.chars() {
+                match c {
+                    '\'' => s.push_str(r"\'"), // escape single quote
+                    '\\' => s.push_str(r"\\"), // escape backslash
+                    _ => s.push(c),
+                }
+            }
+            format!("'{}'", s) 
+        })
+        .collect();
+
+    parts.join(r"$'\n'")
+}
+
