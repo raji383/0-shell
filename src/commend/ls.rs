@@ -60,14 +60,13 @@ pub fn ls(args: &[String]) {
             execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
             println!();
         }
-        ls_one_path(path, show_all, long, classify, multi);
+        ls_one_path(path.clone(), show_all, long, classify, multi);
     }
 }
 
 // =====================================================
 
-fn ls_one_path(raw_path: &String, show_all: bool, long: bool, classify: bool, print_header: bool) {
-    let mut path = raw_path.clone();
+fn ls_one_path(mut path:  String, show_all: bool, long: bool, classify: bool, print_header: bool) {
 
     // expand ~
     if path == "~" {
@@ -106,6 +105,8 @@ fn ls_one_path(raw_path: &String, show_all: bool, long: bool, classify: bool, pr
         return;
     }
 
+    println!("{}",path);
+
     // ===== directory =====
     let mut entries: Vec<_> = match fs::read_dir(&path) {
         Ok(e) => e.flatten().collect(),
@@ -126,7 +127,6 @@ fn ls_one_path(raw_path: &String, show_all: bool, long: bool, classify: bool, pr
     });
     if print_header {
         execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
         println!("{}:", path);
     }
 
@@ -139,6 +139,9 @@ fn ls_one_path(raw_path: &String, show_all: bool, long: bool, classify: bool, pr
                 total_blocks += m.blocks();
             }
             if let Ok(m) = fs::metadata(Path::new(&path).join("..")) {
+                // 512 *8 = 4096  = 4KB
+                //16
+                //24
                 total_blocks += m.blocks();
             }
         }
@@ -153,7 +156,8 @@ fn ls_one_path(raw_path: &String, show_all: bool, long: bool, classify: bool, pr
             }
         }
         execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
+    // 1sector = 512byte 
+    //1Kb  = 1024 byte
         println!("total {}", total_blocks / 2);
     }
 
@@ -242,6 +246,7 @@ fn print_entry(
     classify: bool,
     widths: &Widths,
 ) {
+    // socket like docker and database
     let mode = meta.permissions().mode();
     let ft = meta.file_type();
 
@@ -255,6 +260,8 @@ fn print_entry(
         'l'
     } else if ft.is_socket() {
         's'
+    }else if ft.is_fifo() {
+        'p'
     } else {
         '-'
     };
@@ -271,7 +278,7 @@ fn print_entry(
         if mode & 0o002 != 0 { 'w' } else { '-' },
         if mode & 0o001 != 0 { 'x' } else { '-' },
     );
-
+  //Unsized Type  &path ;;;
     let full_path = base_path.as_ref().join(name);
     let acl_char = if has_acl(&full_path) { '+' } else { ' ' };
     perms.push(acl_char);
@@ -304,7 +311,7 @@ fn print_entry(
     };
 
     let mtime = meta.mtime();
-    let system_time = UNIX_EPOCH + Duration::from_secs(mtime as u64);
+    let system_time = UNIX_EPOCH + Duration::from_secs((mtime + 3600) as u64);
     let datetime: DateTime<Local> = system_time.into();
     let date = datetime.format("%b %d %H:%M");
 
@@ -370,7 +377,7 @@ fn print_entry(
         print!("{}  ", colored);
     }
 }
-
+//Extended Attribute   more info in file
 fn has_acl(path: &Path) -> bool {
     if let Ok(attrs) = xattr::list(path) {
         for attr in attrs {
@@ -381,3 +388,5 @@ fn has_acl(path: &Path) -> bool {
     }
     false
 }
+// dev virtual file size 0
+//driver major 
