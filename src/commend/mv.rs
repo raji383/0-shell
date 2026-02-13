@@ -21,15 +21,16 @@ pub fn mv(args: &[String]) {
             );
             continue;
         }
-
+        let mut exist = true;
         let final_dst: PathBuf = if folder.is_dir() {
             let name = src.file_name().expect("Invalid source");
+            exist = false;
             folder.join(name)
         } else {
             folder.to_path_buf()
         };
 
-        if final_dst.exists() {
+        if final_dst.exists() && !exist {
             eprintln!(
                 "mv: cannot move '{}': destination '{}' already exists",
                 src.display(),
