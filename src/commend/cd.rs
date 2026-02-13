@@ -1,4 +1,4 @@
-use crate::unescape;
+use crate::commend::pwd;
 use crossterm::{cursor, execute};
 use std::env;
 use std::io::{self};
@@ -7,6 +7,7 @@ use std::path::PathBuf;
 // like unix or windows and utf8
 pub fn cd(args: &[String]) {
     let current = env::current_dir().ok();
+    let  mut teri = false;
 
     let target: PathBuf = match args.len() {
         // cd
@@ -21,10 +22,12 @@ pub fn cd(args: &[String]) {
 
         // cd -
         1 if args[0] == "-" => match env::var("OLDPWD") {
-            Ok(old) => PathBuf::from(old),
+            Ok(old) => {
+                teri = true;
+                PathBuf::from(old)
+            }
             Err(_) => {
                 execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-
                 eprintln!("cd: OLDPWD not set");
                 return;
             }
@@ -41,10 +44,7 @@ pub fn cd(args: &[String]) {
         },
 
         // cd path
-        1 => {
-            println!("{}", args[0]);
-            PathBuf::from(&unescape(&args[0]))
-        }
+        1 => PathBuf::from(&args[0]),
 
         _ => {
             execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
@@ -57,6 +57,9 @@ pub fn cd(args: &[String]) {
         execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
         eprintln!("cd: can't cd to {:?}", target);
         return;
+    }
+    if teri {
+        pwd::pwd();
     }
 
     if let Some(cur) = current {

@@ -90,42 +90,4 @@ fn aplye(arg: Vec<String>) {
         }
     }
 }
-pub fn unescape(input: &str) -> String {
-    let mut result = String::new();
-    let mut chars = input.chars().peekable();
 
-    while let Some(c) = chars.next() {
-        if c == '\\'  {
-            if let Some(next) = chars.next() {
-                match next {
-                    'n' => result.push('\n'),
-                    't' => result.push('\t'),
-                    '\\' => result.push('\\'),
-                    '"' => result.push('"'),
-                    _ => {
-                        result.push('\\');
-                        result.push(next);
-                    }
-                }
-            }
-        } else {
-            result.push(c);
-        }
-    }
-
-    result
-}
-
-pub fn escape_special_chars(input: &str) -> String {
-    let mut result = String::with_capacity(input.len());
-
-    for c in input.chars() {
-        match c {
-            '\n' => result.push_str("\\n"),
-            '\t' => result.push_str("\\t"),
-            _ => result.push(c),
-        }
-    }
-
-    result
-}

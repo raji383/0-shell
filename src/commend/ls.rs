@@ -1,11 +1,10 @@
-use crate::escape_special_chars;
-use chrono::naive;
 use crossterm::{cursor, execute};
 use std::env;
 use std::fs;
 use std::io::{self};
 use std::os::unix::fs::FileTypeExt;
-use std::os::unix::fs::{MetadataExt, PermissionsExt};
+use std::os::unix::fs::MetadataExt;
+use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 use std::time::{Duration, UNIX_EPOCH};
 
@@ -188,8 +187,8 @@ fn ls_one_path(mut path: String, show_all: bool, long: bool, classify: bool, pri
                 let size_str = if ft.is_block_device() || ft.is_char_device() {
                     let dev = meta.rdev();
                     if dev != 0 {
-                        let major = (dev >> 8) & 0xfff;
-                        let minor = (dev & 0xff) | ((dev >> 12) & 0xfff00);
+                        let major = libc::major(dev);
+                        let minor = libc::minor(dev);
                         format!("{}, {}", major, minor)
                     } else {
                         "".to_string()
@@ -323,12 +322,8 @@ fn print_entry(
     let is_fifo = ft.is_fifo();
 
     let colored = if is_symlink {
-        let h = name;
-        let mut display = escape_special_chars(name);
-        if h.contains('\n') {
-            display.insert_str(0, "\'");
-            display.push('\'');
-        }
+        let mut display = name.replace("\n", "'$\\n'");
+
         if classify {
             display.push('@');
         }
@@ -339,12 +334,8 @@ fn print_entry(
             format!("{CYAN}{display}{RESET} -> {RED}(broken){RESET}")
         }
     } else {
-        let h = name;
-        let mut display = escape_special_chars(name);
-        if h.contains('\n') {
-            display.insert_str(0, "\'");
-            display.push('\'');
-        }
+        let mut display = name.replace("\n", "'$\\n'");
+
         if classify {
             if is_dir {
                 display.push('/');
@@ -362,13 +353,9 @@ fn print_entry(
         } else if is_exec {
             format!("{GREEN}{display}{RESET}")
         } else {
-            let h = name;
-            let mut dd = escape_special_chars(name);
-            if h.contains('\n') {
-                dd.insert_str(0, "\'");
-                dd.push('\'');
-            }
-            dd
+            let display = name.replace("\n", "'$\\n'");
+
+            display
         }
     };
 

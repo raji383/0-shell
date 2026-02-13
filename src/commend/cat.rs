@@ -1,4 +1,3 @@
-use crate::unescape;
 use crossterm::event::{self, Event, KeyCode, KeyModifiers};
 use crossterm::{cursor, execute};
 use std::fs::File;
@@ -6,7 +5,6 @@ use std::io::{self, Read, Write};
 use std::process::exit;
 
 pub fn cat(args: &[String]) {
-    println!("{:?}",args);
     if args.is_empty() {
         let mut line = String::new();
 
@@ -48,7 +46,7 @@ pub fn cat(args: &[String]) {
 
     // ===== File mode =====
     for filename in args {
-        let filen = unescape(&unescape(filename));
+        let filen = filename;
         match File::open(filen) {
             
             Ok(mut file) => {
