@@ -2,6 +2,8 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
+use crate::unescape;
+
 pub fn mv(args: &[String]) {
     if args.len() == 0 {
         eprintln!("mv: missing file operand");
@@ -10,10 +12,23 @@ pub fn mv(args: &[String]) {
         eprintln!("mv: missing destination file operand after {}", args[1]);
         return;
     }
-    let folder = Path::new(&args[args.len() - 1]);
-    for i in 0..(args.len() - 1) {
-        let src = Path::new(&args[i]);
+    let mut name = unescape(&args[args.len() - 1]);
+    let c = Path::new(&name);
+    if c.exists() {
+    } else {
+        name = args[args.len() - 1].clone();
+    }
 
+    let folder = Path::new(&name);
+    for i in 0..(args.len() - 1) {
+        let mut name = unescape(&args[i]);
+
+        let c = Path::new(&name);
+        if c.exists() {
+        } else {
+            name = args[i].clone();
+        }
+        let src = Path::new(&name);
         if !src.exists() {
             eprintln!(
                 "mv: cannot stat '{}': No such file or directory",

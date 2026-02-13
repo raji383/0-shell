@@ -1,3 +1,5 @@
+use crate::escape_special_chars;
+use chrono::naive;
 use crossterm::{cursor, execute};
 use std::env;
 use std::fs;
@@ -6,7 +8,6 @@ use std::os::unix::fs::FileTypeExt;
 use std::os::unix::fs::{MetadataExt, PermissionsExt};
 use std::path::Path;
 use std::time::{Duration, UNIX_EPOCH};
-use crate::escape_special_chars;
 
 use chrono::{DateTime, Local};
 
@@ -49,7 +50,6 @@ pub fn ls(args: &[String]) {
             paths.push(arg.clone());
         }
     }
-
 
     if paths.is_empty() {
         paths.push(".".to_string());
@@ -323,7 +323,12 @@ fn print_entry(
     let is_fifo = ft.is_fifo();
 
     let colored = if is_symlink {
-        let mut display =escape_special_chars(name);
+        let h = name;
+        let mut display = escape_special_chars(name);
+        if h.contains('\n') {
+            display.insert_str(0, "\'");
+            display.push('\'');
+        }
         if classify {
             display.push('@');
         }
@@ -334,7 +339,12 @@ fn print_entry(
             format!("{CYAN}{display}{RESET} -> {RED}(broken){RESET}")
         }
     } else {
-        let mut display =escape_special_chars(name);
+        let h = name;
+        let mut display = escape_special_chars(name);
+        if h.contains('\n') {
+            display.insert_str(0, "\'");
+            display.push('\'');
+        }
         if classify {
             if is_dir {
                 display.push('/');
@@ -352,7 +362,12 @@ fn print_entry(
         } else if is_exec {
             format!("{GREEN}{display}{RESET}")
         } else {
-            let dd = escape_special_chars(name);
+            let h = name;
+            let mut dd = escape_special_chars(name);
+            if h.contains('\n') {
+                dd.insert_str(0, "\'");
+                dd.push('\'');
+            }
             dd
         }
     };
@@ -391,5 +406,3 @@ fn has_acl(path: &Path) -> bool {
     false
 }
 // dev virtual file size 0
-
-

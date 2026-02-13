@@ -1,3 +1,4 @@
+use crate::unescape;
 use crossterm::{cursor, execute};
 use std::fs;
 use std::io;
@@ -8,9 +9,24 @@ pub fn cp(args: &[String]) {
         eprintln!("Usage: cp <source> <destination>");
         return;
     }
-    let dst = Path::new(&args[args.len() - 1]);
+    let mut name = unescape(&args[args.len() - 1]);
+    let c = Path::new(&name);
+    if c.exists() {
+    } else {
+        name = args[args.len() - 1].clone();
+    }
+
+    let dst = Path::new(&name);
     for i in 0..(args.len() - 1) {
-        let src = Path::new(&args[i]);
+        let mut name = unescape(&args[i]);
+
+        let c = Path::new(&name);
+        if c.exists() {
+        } else {
+            name = args[i].clone();
+        }
+
+        let src = Path::new(&name);
 
         if !src.exists() {
             eprintln!("Error: source file does not exist");

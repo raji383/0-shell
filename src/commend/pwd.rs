@@ -1,4 +1,3 @@
-use crate::escape_special_chars;
 use crossterm::{cursor, execute};
 use std::env;
 use std::io::{self};
