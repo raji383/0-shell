@@ -8,19 +8,22 @@ pub fn parse(l: &str) -> bool {
 
     let arg = l.split("&");
     let mut le = Vec::new();
-    let mut in_quotes = false;
+    let mut in_squotes = false;
+    let mut in_dquotes = false;
     for s in arg {
         if s.is_empty() {
             continue;
         }
         let mut args = Vec::new();
         let mut current = String::new();
-        in_quotes = false;
+        in_dquotes = false;
+        in_squotes = false;
         let src = s.replace("\\\"", "");
         for c in src.chars() {
             match c {
-                '"' => in_quotes = !in_quotes,
-                ' ' if !in_quotes => {
+                '"' if !in_squotes => in_dquotes = !in_dquotes,
+                '\'' if !in_dquotes => in_squotes = !in_squotes,
+                ' ' if !in_dquotes || !in_squotes => {
                     if !current.is_empty() {
                         args.push(current.clone());
                         current.clear();
@@ -35,7 +38,7 @@ pub fn parse(l: &str) -> bool {
         }
         le.push(args);
     }
-    if in_quotes {
+    if in_dquotes ||in_squotes {
         return false;
     }
     for i in le {
@@ -90,4 +93,3 @@ fn aplye(arg: Vec<String>) {
         }
     }
 }
-
