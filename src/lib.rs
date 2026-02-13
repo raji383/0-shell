@@ -128,7 +128,7 @@ pub fn unescape(input: &str) -> String {
     let mut chars = input.chars().peekable();
 
     while let Some(c) = chars.next() {
-        if c == '\\' {
+        if c == '\\'  {
             if let Some(next) = chars.next() {
                 match next {
                     'n' => result.push('\n'),

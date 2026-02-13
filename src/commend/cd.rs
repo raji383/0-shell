@@ -47,7 +47,11 @@ pub fn cd(args: &[String]) {
         },
 
         // cd path
-        1 => PathBuf::from(&unescape(&args[0])),
+        1 => {
+            println!("{}",args[0]);
+         PathBuf::from(&unescape(&args[0]))
+        } 
+            
 
         _ => {
             execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();

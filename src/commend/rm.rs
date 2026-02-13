@@ -10,7 +10,7 @@ pub fn rm(args: &[String]) {
         eprintln!("rm: missing operand");
         return;
     }
-
+    println!("{:?}",args);
     let mut recursive = false;
     let mut force = false;
     let mut files = Vec::new(); 
