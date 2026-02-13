@@ -2,6 +2,7 @@ use crossterm::{cursor, execute};
 use std::fs;
 use std::io;
 use std::path::Path;
+use crate::unescape;
 
 pub fn rm(args: &[String]) {
     if args.is_empty() {
@@ -9,7 +10,7 @@ pub fn rm(args: &[String]) {
         eprintln!("rm: missing operand");
         return;
     }
-
+    println!("{:?}",args);
     let mut recursive = false;
     let mut force = false;
     let mut files = Vec::new(); 
@@ -41,7 +42,8 @@ pub fn rm(args: &[String]) {
     }
 
     for name in files {
-        let path = Path::new(name);
+        let nn =unescape(name);
+        let path = Path::new(&nn);
 
         if !path.exists() {
             if !force {

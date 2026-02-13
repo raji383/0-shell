@@ -4,6 +4,7 @@ use crossterm::{cursor, execute};
 use gg::parse;
 use std::io::Write;
 use std::{env, io};
+use gg::escape_special_chars;
 fn main() -> std::io::Result<()> {
     let purple = "\x1b[38;5;141m";
     let cyan = "\x1b[38;5;44m";
@@ -40,7 +41,7 @@ fn main() -> std::io::Result<()> {
             match env::current_dir() {
                 Ok(path) => {
                     let dir_name = path.file_name().unwrap_or_else(|| path.as_os_str());
-                    print!("{}{}{}", blue_cyan, dir_name.to_string_lossy(), reset);
+                    print!("{}{}{}", blue_cyan, escape_special_chars(&dir_name.to_string_lossy()), reset);
                 }
                 Err(_) => {}
             }

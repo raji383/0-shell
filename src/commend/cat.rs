@@ -1,3 +1,4 @@
+use crate::unescape;
 use crossterm::event::{self, Event, KeyCode, KeyModifiers};
 use crossterm::{cursor, execute};
 use std::fs::File;
@@ -5,8 +6,8 @@ use std::io::{self, Read, Write};
 use std::process::exit;
 
 pub fn cat(args: &[String]) {
+    println!("{:?}",args);
     if args.is_empty() {
-        //enable_raw_mode().unwrap();
         let mut line = String::new();
 
         loop {
@@ -47,11 +48,13 @@ pub fn cat(args: &[String]) {
 
     // ===== File mode =====
     for filename in args {
-        match File::open(filename) {
+        let filen = unescape(&unescape(filename));
+        match File::open(filen) {
+            
             Ok(mut file) => {
                 let mut content = String::new();
-                if file.read_to_string(&mut content).is_ok() {
-                    println!("{}", content);
+                if file.read_to_string(&mut content).is_ok() {       
+                    println!("{}", content.replace("\n","\r\n"));
                 }
             }
             Err(e) => {

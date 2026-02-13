@@ -2,6 +2,7 @@ use crossterm::{cursor, execute};
 use std::fs;
 use std::path::Path;
 use std::io::{self};
+use crate::unescape;
 
 
 pub fn mkdir(args: &[String]) {
@@ -25,29 +26,5 @@ pub fn mkdir(args: &[String]) {
 }
 
 }
-fn unescape(input: &str) -> String {
-    let mut result = String::new();
-    let mut chars = input.chars().peekable();
 
-    while let Some(c) = chars.next() {
-        if c == '\\' {
-            if let Some(next) = chars.next() {
-                match next {
-                    'n' => result.push('\n'),
-                    't' => result.push('\t'),
-                    '\\' => result.push('\\'),
-                    '"' => result.push('"'),
-                    _ => {
-                        result.push('\\');
-                        result.push(next);
-                    }
-                }
-            }
-        } else {
-            result.push(c);
-        }
-    }
-
-    result
-}
 
