@@ -6,6 +6,8 @@ use std::path::PathBuf;
 // pathBuf why ? because handle multi os;
 // like unix or windows and utf8
 pub fn cd(args: &[String]) {
+    let current = env::current_dir().ok();
+
     let target: PathBuf = match args.len() {
         // cd
         0 => match env::var("HOME") {
@@ -57,15 +59,9 @@ pub fn cd(args: &[String]) {
         return;
     }
 
-    let current = match env::current_dir() {
-        Ok(p) => p,
-        Err(e) => {
-            eprintln!("cd: {}", e);
-            return;
+    if let Some(cur) = current {
+        unsafe {
+            env::set_var("OLDPWD", cur);
         }
-    };
-
-    unsafe {
-        env::set_var("OLDPWD", current);
     }
 }
