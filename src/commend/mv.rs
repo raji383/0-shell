@@ -3,15 +3,15 @@ use std::{
     path::{Path, PathBuf},
 };
 pub fn mv(args: &[String]) {
-    if args.len() == 1 {
+    if args.len() == 0 {
         eprintln!("mv: missing file operand");
         return;
-    } else if args.len() == 2 {
+    } else if args.len() == 3 {
         eprintln!("mv: missing destination file operand after {}", args[1]);
         return;
     }
     let folder = Path::new(&args[args.len() - 1]);
-    for i in 1..(args.len() - 1) {
+    for i in 0..(args.len() - 1) {
         let src = Path::new(&args[i]);
 
         if !src.exists() {

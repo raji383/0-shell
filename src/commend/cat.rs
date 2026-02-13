@@ -1,5 +1,4 @@
 use crossterm::event::{self, Event, KeyCode, KeyModifiers};
-use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use crossterm::{cursor, execute};
 use std::fs::File;
 use std::io::{self, Read, Write};

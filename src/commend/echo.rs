@@ -13,11 +13,11 @@ pub fn echo(args: &[String]) {
     }
 
     // print args
+    execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
     for (i, arg) in args[start..].iter().enumerate() {
         if i > 0 {
             print!(" ");
         }
-        execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
         print!("{}", arg);
     }
 
