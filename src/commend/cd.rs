@@ -2,6 +2,7 @@ use crossterm::{cursor, execute};
 use std::env;
 use std::io::{self};
 use std::path::PathBuf;
+use crate::unescape;
 // pathBuf why ? because handle multi os;
 // like unix or windows and utf8
 pub fn cd(args: &[String]) {
@@ -46,7 +47,7 @@ pub fn cd(args: &[String]) {
         },
 
         // cd path
-        1 => PathBuf::from(&args[0]),
+        1 => PathBuf::from(&unescape(&args[0])),
 
         _ => {
             execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();

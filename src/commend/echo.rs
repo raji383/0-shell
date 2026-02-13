@@ -17,7 +17,7 @@ pub fn echo(args: &[String]) {
         if i > 0 {
             print!(" ");
         }
-        execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
+     //  execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
         print!("{}", arg);
     }
 

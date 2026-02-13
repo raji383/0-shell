@@ -6,6 +6,7 @@ use std::os::unix::fs::FileTypeExt;
 use std::os::unix::fs::{MetadataExt, PermissionsExt};
 use std::path::Path;
 use std::time::{Duration, UNIX_EPOCH};
+use crate::escape_special_chars;
 
 use chrono::{DateTime, Local};
 
@@ -49,6 +50,7 @@ pub fn ls(args: &[String]) {
         }
     }
 
+
     if paths.is_empty() {
         paths.push(".".to_string());
     }
@@ -66,8 +68,7 @@ pub fn ls(args: &[String]) {
 
 // =====================================================
 
-fn ls_one_path(mut path:  String, show_all: bool, long: bool, classify: bool, print_header: bool) {
-
+fn ls_one_path(mut path: String, show_all: bool, long: bool, classify: bool, print_header: bool) {
     // expand ~
     if path == "~" {
         path = env::var("HOME").unwrap_or_else(|_| {
@@ -105,7 +106,7 @@ fn ls_one_path(mut path:  String, show_all: bool, long: bool, classify: bool, pr
         return;
     }
 
-   // println!("{}",path);
+    // println!("{}",path);
 
     // ===== directory =====
     let mut entries: Vec<_> = match fs::read_dir(&path) {
@@ -156,8 +157,8 @@ fn ls_one_path(mut path:  String, show_all: bool, long: bool, classify: bool, pr
             }
         }
         execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-    // 1sector = 512byte 
-    //1Kb  = 1024 byte
+        // 1sector = 512byte
+        //1Kb  = 1024 byte
         println!("total {}", total_blocks / 2);
     }
 
@@ -260,7 +261,7 @@ fn print_entry(
         'l'
     } else if ft.is_socket() {
         's'
-    }else if ft.is_fifo() {
+    } else if ft.is_fifo() {
         'p'
     } else {
         '-'
@@ -278,7 +279,7 @@ fn print_entry(
         if mode & 0o002 != 0 { 'w' } else { '-' },
         if mode & 0o001 != 0 { 'x' } else { '-' },
     );
-  //Unsized Type  &path ;;;
+    //Unsized Type  &path ;;;
     let full_path = base_path.as_ref().join(name);
     let acl_char = if has_acl(&full_path) { '+' } else { ' ' };
     perms.push(acl_char);
@@ -322,7 +323,7 @@ fn print_entry(
     let is_fifo = ft.is_fifo();
 
     let colored = if is_symlink {
-        let mut display = escape_name(name);
+        let mut display =escape_special_chars(name);
         if classify {
             display.push('@');
         }
@@ -333,7 +334,7 @@ fn print_entry(
             format!("{CYAN}{display}{RESET} -> {RED}(broken){RESET}")
         }
     } else {
-        let mut display = escape_name(name);
+        let mut display =escape_special_chars(name);
         if classify {
             if is_dir {
                 display.push('/');
@@ -351,8 +352,8 @@ fn print_entry(
         } else if is_exec {
             format!("{GREEN}{display}{RESET}")
         } else {
-        let  dd = escape_name(name);
-        dd
+            let dd = escape_special_chars(name);
+            dd
         }
     };
 
@@ -390,26 +391,5 @@ fn has_acl(path: &Path) -> bool {
     false
 }
 // dev virtual file size 0
-fn escape_name(name: &str) -> String {
-    if !name.contains('\n') {
-        return name.to_string();
-    }
 
-    let parts: Vec<String> = name
-        .split('\n')
-        .map(|part| {
-            let mut s = String::new();
-            for c in part.chars() {
-                match c {
-                    '\'' => s.push_str(r"\'"), // escape single quote
-                    '\\' => s.push_str(r"\\"), // escape backslash
-                    _ => s.push(c),
-                }
-            }
-            format!("'{}'", s) 
-        })
-        .collect();
-
-    parts.join(r"$'\n'")
-}
 
