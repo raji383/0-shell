@@ -1,6 +1,4 @@
 use crossterm::terminal::disable_raw_mode;
-use crossterm::{cursor, execute};
-use std::io;
 pub mod commend;
 
 pub fn parse(l: &str) -> bool {
@@ -12,7 +10,7 @@ pub fn parse(l: &str) -> bool {
     let mut le = Vec::new();
     let mut in_quotes = false;
     for s in arg {
-        if s.is_empty()  {
+        if s.is_empty() {
             continue;
         }
         let mut args = Vec::new();
@@ -50,65 +48,34 @@ fn aplye(arg: Vec<String>) {
         return;
     }
     let green = "\x1b[38;5;82m";
-    let yellow = "\x1b[38;5;221m";
-    let cyan = "\x1b[38;5;44m";
-    //let gray = "\x1b[38;5;245m";
-    let purple = "\x1b[38;5;141m";
     let reset = "\x1b[0m";
 
     match arg[0].as_str() {
         "exit" => {
-            println!("{}Exiting the shell. Goodbye!{}", green, reset);
-            disable_raw_mode().unwrap();
+            println!("\r{}Exiting the shell. Goodbye!{}", green, reset);
+            if let Err(e) = disable_raw_mode() {
+                eprintln!("\rFailed to disable raw mode: {}", e);
+            }
             std::process::exit(0);
         }
 
-        "help" => {
-            println!(
-                "{}================ My Shell Help ================{}",
-                purple, reset
-            );
-            execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-            println!("{}Built-in commands:{}", yellow, reset);
-            execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-            println!(
-                "{}  echo, cd, ls, pwd, cat, cp, rm, mv, mkdir, exit, help{}",
-                cyan, reset
-            );
-            execute!(io::stdout(), cursor::MoveToColumn(0),).unwrap();
-            println!(
-                "{}================================================{}",
-                purple, reset
-            );
-        }
+        "help" => crate::commend::help::help(),
 
-        "echo" => {
-            crate::commend::echo::echo(&arg[1..])
-        }
+        "echo" => crate::commend::echo::echo(&arg[1..]),
 
         "pwd" => {
             crate::commend::pwd::pwd();
         }
 
-        "cd" => {
-            crate::commend::cd::cd(&arg[1..])
-        }
+        "cd" => crate::commend::cd::cd(&arg[1..]),
 
-        "ls" => {
-            crate::commend::ls::ls(&arg[1..])
-        }
+        "ls" => crate::commend::ls::ls(&arg[1..]),
 
-        "cat" => {
-             crate::commend::cat::cat(&arg[1..])
+        "cat" => crate::commend::cat::cat(&arg[1..]),
 
-        }
-        
+        "mkdir" => crate::commend::mkdir::mkdir(&arg[1..]),
 
-        "mkdir" => {
-             crate::commend::mkdir::mkdir(&arg[1..])
-        }
-
-        "rm" => {  crate::commend::rm::rm(&arg[1..])}
+        "rm" => crate::commend::rm::rm(&arg[1..]),
 
         "cp" => {
             crate::commend::cp::cp(&arg[1..]);

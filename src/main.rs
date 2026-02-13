@@ -40,7 +40,6 @@ fn main() -> std::io::Result<()> {
             match env::current_dir() {
                 Ok(path) => {
                     let dir_name = path.file_name().unwrap_or_else(|| path.as_os_str());
-                    execute!(io::stdout(), cursor::MoveToColumn(0)).unwrap();
                     print!("{}{}{}", blue_cyan, dir_name.to_string_lossy(), reset);
                 }
                 Err(_) => {}
@@ -50,7 +49,7 @@ fn main() -> std::io::Result<()> {
             if con {
                 execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                 print!("> ");
-                con=false
+                con = false
             } else {
                 line.push_str("\\n");
                 execute!(io::stdout(), cursor::MoveToColumn(0),)?;
@@ -65,7 +64,7 @@ fn main() -> std::io::Result<()> {
                         execute!(io::stdout(), cursor::MoveToColumn(0),)?;
                         println!();
                         if line.ends_with('\\') {
-                            con=true;
+                            con = true;
                             line.pop();
                             break;
                         }

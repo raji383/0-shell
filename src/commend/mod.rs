@@ -7,3 +7,4 @@ pub mod cat;
 pub mod rm;
 pub mod mv;
 pub mod echo;
+pub mod help;
