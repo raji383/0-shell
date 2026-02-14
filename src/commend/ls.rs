@@ -84,8 +84,8 @@ fn ls_one_path(mut path: String, show_all: bool, long: bool, classify: bool, pri
         }
     };
 
-    // ===== single file =====
-    if meta.is_file() || meta.file_type().is_symlink() {
+    // ===== single file =====&
+    if meta.is_file() || meta.file_type().is_symlink() || meta.file_type().is_char_device()  || meta.file_type().is_block_device(){
         print_entry(
             Path::new(&path).parent().unwrap_or(Path::new(".")),
             Path::new(&path)
